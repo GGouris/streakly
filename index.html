@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streakly — Привычки, которые не ломаются</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0e0e0f;
+  --surface:#18181b;
+  --ink:#f0efe8;
+  --muted:#888680;
+  --accent:#f97316;
+  --accent-dim:rgba(249,115,22,0.15);
+  --border:rgba(240,239,232,0.08);
+  --green:#4ade80;
+}
+
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
+.logo{font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.3px}
+.logo span{color:var(--accent)}
+.lang-switch{display:flex;gap:4px}
+.lang-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .2s}
+.lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.hero{padding:90px 40px 70px;max-width:780px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-dim);border:1px solid rgba(249,115,22,0.3);color:var(--accent);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:32px}
+.badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(42px,6.5vw,68px);line-height:1.08;letter-spacing:-1.5px;margin-bottom:24px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{font-size:18px;color:var(--muted);max-width:500px;margin-bottom:44px;line-height:1.7}
+
+.streak-demo{display:flex;gap:6px;margin-bottom:44px;flex-wrap:wrap}
+.streak-day{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;transition:all .3s}
+.streak-day.done{background:var(--accent);color:#fff}
+.streak-day.today{background:var(--accent-dim);border:1.5px solid var(--accent);color:var(--accent)}
+.streak-day.empty{background:var(--surface);color:var(--muted)}
+.streak-label{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+.form-row{display:flex;gap:8px;flex-wrap:wrap}
+.form-row input{flex:1;min-width:220px;padding:14px 18px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;transition:border-color .2s}
+.form-row input:focus{border-color:var(--accent)}
+.form-row input::placeholder{color:var(--muted)}
+.form-row button{padding:14px 28px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:transform .15s,opacity .2s;white-space:nowrap}
+.form-row button:hover{opacity:.9;transform:translateY(-1px)}
+.form-hint{font-size:13px;color:var(--muted);margin-top:10px}
+.success-msg{display:none;color:var(--green);font-weight:600;margin-top:12px;font-size:15px}
+
+hr{border:none;border-top:1px solid var(--border);max-width:780px;margin:0 auto}
+
+.section{padding:64px 40px;max-width:780px;margin:0 auto}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:36px}
+
+.steps{display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:52px 1fr;gap:20px;padding:28px 0;border-bottom:1px solid var(--border);opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.step.visible{opacity:1;transform:translateY(0)}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'DM Serif Display',serif;font-size:42px;color:var(--accent);line-height:1;padding-top:2px;opacity:.6}
+.step h3{font-size:17px;font-weight:600;margin-bottom:6px}
+.step p{font-size:15px;color:var(--muted);line-height:1.6}
+
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.why-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;transition:border-color .2s}
+.why-card:hover{border-color:rgba(249,115,22,.3)}
+.why-icon{font-size:22px;margin-bottom:12px}
+.why-card h4{font-size:15px;font-weight:600;margin-bottom:6px}
+.why-card p{font-size:14px;color:var(--muted);line-height:1.5}
+
+.cta-bottom{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 40px;text-align:center}
+.cta-bottom h2{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,46px);margin-bottom:14px;letter-spacing:-.5px}
+.cta-bottom p{color:var(--muted);margin-bottom:36px;font-size:17px}
+.cta-bottom .form-row{max-width:480px;margin:0 auto}
+
+footer{padding:24px 40px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted);flex-wrap:wrap;gap:8px}
+
+[data-lang]{display:none}
+body.ru [data-lang="ru"],body.en [data-lang="en"]{display:block}
+body.ru [data-lang-inline="en"],body.en [data-lang-inline="ru"]{display:none}
+[data-lang-inline]{display:inline}
+</style>
+</head>
+<body class="en">
+
+<nav>
+  <div class="logo">Streak<span>ly</span></div>
+  <div class="lang-switch">
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div data-lang="ru">
+    <div class="badge">Ранний доступ</div>
+    <h1>Привычки, которые<br><em>не ломаются</em></h1>
+    <p>AI строит твой личный план и подстраивает его каждый день. Поддерживай серию — и смотри, как меняется жизнь.</p>
+  </div>
+  <div data-lang="en">
+    <div class="badge">Early access</div>
+    <h1>Habits that<br><em>never break</em></h1>
+    <p>AI builds your personal plan and adjusts it daily. Keep your streak going — and watch your life change.</p>
+  </div>
+
+  <div class="streak-label">
+    <span data-lang-inline="ru">Твоя серия: 12 дней подряд 🔥</span>
+    <span data-lang-inline="en">Your streak: 12 days in a row 🔥</span>
+  </div>
+  <div class="streak-demo" id="streakDemo"></div>
+
+  <div class="form-row">
+    <input type="email" id="email1" placeholder="your@email.com"/>
+    <button onclick="submitEmail('email1','success1')">
+      <span data-lang-inline="ru">Хочу первым</span>
+      <span data-lang-inline="en">Get early access</span>
+    </button>
+  </div>
+  <div class="form-hint">
+    <span data-lang-inline="ru">Бесплатно. Без спама. Ты будешь первым.</span>
+    <span data-lang-inline="en">Free. No spam. You'll be notified first.</span>
+  </div>
+  <div class="success-msg" id="success1">
+    <span data-lang-inline="ru">✓ Отлично! Ты в списке — скоро напишем.</span>
+    <span data-lang-inline="en">✓ You're on the list — talk soon.</span>
+  </div>
+</section>
+
+<hr>
+
+<section class="section">
+  <div class="section-label">
+    <span data-lang-inline="ru">Как это работает</span>
+    <span data-lang-inline="en">How it works</span>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <div data-lang="ru"><h3>Ставишь цель</h3><p>Пишешь что хочешь изменить — похудеть, читать каждый день, учить язык. Без длинных анкет.</p></div>
+        <div data-lang="en"><h3>Set your goal</h3><p>Tell it what you want to change — lose weight, read daily, learn a language. No long forms.</p></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <div data-lang="ru"><h3>AI строит план</h3><p>Не шаблон из интернета — план под твой ритм жизни, уровень занятости и реальные цели.</p></div>
+        <div data-lang="en"><h3>AI builds your plan</h3><p>Not a generic template — a plan tailored to your schedule, lifestyle and actual goals.</p></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <div data-lang="ru"><h3>Идёшь по плану</h3><p>Каждый день маленькие задачи. Отмечаешь — видишь прогресс. Пропустил — AI мягко скорректирует.</p></div>
+        <div data-lang="en"><h3>Follow the plan</h3><p>Small daily tasks. Check them off, track progress. Missed a day? AI adjusts without judgment.</p></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <div data-lang="ru"><h3>Серия растёт сама</h3><p>Привычка идёт хорошо? AI усложняет. Застрял? Упрощает. Постоянная адаптация без лишних усилий.</p></div>
+        <div data-lang="en"><h3>Your streak keeps growing</h3><p>Going well? AI raises the bar. Stuck? It simplifies. Continuous adaptation, zero effort.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<section class="section">
+  <div class="section-label">
+    <span data-lang-inline="ru">Почему Streakly</span>
+    <span data-lang-inline="en">Why Streakly</span>
+  </div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🎯</div>
+      <div data-lang="ru"><h4>Персонально</h4><p>Каждый план уникален. AI учитывает твой темп, не среднестатистический.</p></div>
+      <div data-lang="en"><h4>Personal</h4><p>Every plan is unique. AI adapts to your pace, not the average person's.</p></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🔥</div>
+      <div data-lang="ru"><h4>Серии мотивируют</h4><p>Не хочется ломать серию — это работает лучше любых напоминаний.</p></div>
+      <div data-lang="en"><h4>Streaks motivate</h4><p>You won't want to break your streak — better than any reminder.</p></div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🔄</div>
+      <div data-lang="ru"><h4>Адаптивно</h4><p>Жизнь меняется — план тоже. Никакого застревания на одном шаблоне.</p></div>
+      <div data-lang="en"><h4>Adaptive</h4><p>Life changes — so does your plan. No rigid template holding you back.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-bottom">
+  <div data-lang="ru"><h2>Готов начать серию?</h2><p>Оставь email — пришлём доступ первым. Без спама.</p></div>
+  <div data-lang="en"><h2>Ready to start your streak?</h2><p>Drop your email — we'll send you access first. No spam.</p></div>
+  <div class="form-row">
+    <input type="email" id="email2" placeholder="your@email.com"/>
+    <button onclick="submitEmail('email2','success2')">
+      <span data-lang-inline="ru">Получить доступ</span>
+      <span data-lang-inline="en">Get access</span>
+    </button>
+  </div>
+  <div class="form-hint">
+    <span data-lang-inline="ru">Присоединились уже <strong>0 человек</strong></span>
+    <span data-lang-inline="en"><strong>0 people</strong> joined so far</span>
+  </div>
+  <div class="success-msg" id="success2" style="color:var(--green)">
+    <span data-lang-inline="ru">✓ Записал! Ты будешь первым.</span>
+    <span data-lang-inline="en">✓ Got it! You'll be first.</span>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Streakly</span>
+  <span><span data-lang-inline="ru">Сделано с помощью AI</span><span data-lang-inline="en">Built with AI</span></span>
+</footer>
+
+<script>
+function setLang(lang){
+  document.body.className=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===lang));
+}
+function submitEmail(inputId,successId){
+  const val=document.getElementById(inputId).value;
+  if(!val||!val.includes('@')){document.getElementById(inputId).focus();return;}
+  document.getElementById(inputId).value='';
+  document.getElementById(successId).style.display='block';
+}
+const days=document.getElementById('streakDemo');
+for(let i=0;i<21;i++){
+  const d=document.createElement('div');
+  d.className='streak-day '+(i<12?'done':i===12?'today':'empty');
+  d.textContent=i+1;
+  days.appendChild(d);
+}
+const steps=document.querySelectorAll('.step');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*100)});
+},{threshold:0.1});
+steps.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
